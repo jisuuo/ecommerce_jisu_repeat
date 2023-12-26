@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -17,5 +16,12 @@ export class UserService {
     const newUser = await this.userRepo.create(createUserDto);
     await this.userRepo.save(newUser);
     return newUser;
+  }
+
+  // 로그인 api
+  async getUserByEmail(email: string) {
+    const user = await this.userRepo.findOneBy({ email });
+    if (user) return user;
+    throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
 }
