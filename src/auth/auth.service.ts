@@ -1,14 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import * as bcrypt from 'bcryptjs';
 import { LoginUserDto } from '../user/dto/login-user.dto';
+import { TokenPayloadInterface } from '../interfaces/tokenPayload.interface';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+  ) {}
 
   // 회원가입 api
   async signUp(createUserDto: CreateUserDto) {
@@ -24,5 +28,14 @@ export class AuthService {
       throw new HttpException('Not Matched', HttpStatus.CONFLICT);
     }
     return user;
+  }
+
+  async getCookieWithToken(userId: string) {
+    const payload: TokenPayloadInterface = { userId };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+    });
+    return token;
   }
 }

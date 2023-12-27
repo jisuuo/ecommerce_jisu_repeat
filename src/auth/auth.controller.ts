@@ -20,7 +20,12 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalUserGuard)
   async login(@Req() req: RequestWithUserInterface) {
-    return req.user;
+    const user = req.user;
+    const token = await this.authService.getCookieWithToken(user.id);
+    return {
+      user,
+      token,
+    };
     //return await this.authService.login(loginUserDto);
   }
 }
