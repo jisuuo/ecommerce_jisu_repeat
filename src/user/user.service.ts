@@ -24,4 +24,10 @@ export class UserService {
     if (user) return user;
     throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
+
+  async getUserById(userId: string) {
+    const user = await this.userRepo.findOneBy({ id: userId });
+    if (user) return user;
+    throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+  }
 }
