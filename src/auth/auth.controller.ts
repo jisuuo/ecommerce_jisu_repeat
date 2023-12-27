@@ -1,17 +1,10 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from '../user/dto/login-user.dto';
+import { LocalUserGuard } from '../guards/local-user.guard';
+import { RequestWithUserInterface } from '../interfaces/requestWithUser.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -25,10 +18,9 @@ export class AuthController {
 
   // 로그인 api
   @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.authService.login(
-      loginUserDto.email,
-      loginUserDto.password,
-    );
+  @UseGuards(LocalUserGuard)
+  async login(@Req() req: RequestWithUserInterface) {
+    return req.user;
+    //return await this.authService.login(loginUserDto);
   }
 }
