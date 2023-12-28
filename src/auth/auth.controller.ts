@@ -2,10 +2,10 @@ import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { LoginUserDto } from '../user/dto/login-user.dto';
 import { LocalUserGuard } from '../guards/local-user.guard';
 import { RequestWithUserInterface } from '../interfaces/requestWithUser.interface';
 import { JwtUserGuard } from '../guards/jwt-user.guard';
+import { CheckEmailDto } from '../user/dto/check-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -39,5 +39,13 @@ export class AuthController {
   @Post('email/send')
   async sendMail(@Body('email') email: string) {
     return await this.authService.sendMail(email);
+  }
+
+  @Post('email/check')
+  async checkEmail(@Body() checkEmailDto: CheckEmailDto) {
+    return await this.authService.checkEmail(
+      checkEmailDto.email,
+      checkEmailDto.code,
+    );
   }
 }
