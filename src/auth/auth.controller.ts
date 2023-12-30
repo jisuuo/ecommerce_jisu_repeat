@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Get,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { CreateUserDto } from '../user/dto/create-user.dto';
@@ -6,6 +14,7 @@ import { LocalUserGuard } from '../guards/local-user.guard';
 import { RequestWithUserInterface } from '../interfaces/requestWithUser.interface';
 import { JwtUserGuard } from '../guards/jwt-user.guard';
 import { CheckEmailDto } from '../user/dto/check-email.dto';
+import { GoogleUserGuard } from '../guards/google-user.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -47,5 +56,18 @@ export class AuthController {
       checkEmailDto.email,
       checkEmailDto.code,
     );
+  }
+
+  // 구글 로그인
+  @Get('google')
+  @UseGuards(GoogleUserGuard)
+  async googleLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleUserGuard)
+  async googleCallback(@Req() req: RequestWithUserInterface) {
+    return req.user;
   }
 }
