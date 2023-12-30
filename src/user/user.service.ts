@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { ProviderEnum } from '../enum/provider.enum';
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,10 @@ export class UserService {
 
   // 회원가입 api
   async createUser(createUserDto: CreateUserDto) {
-    const newUser = await this.userRepo.create(createUserDto);
+    const newUser = await this.userRepo.create({
+      ...createUserDto,
+      provider: ProviderEnum.LOCAL,
+    });
     await this.userRepo.save(newUser);
     return newUser;
   }
