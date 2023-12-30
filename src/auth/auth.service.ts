@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { EmailService } from '../email/email.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { ProviderEnum } from '../enum/provider.enum';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,10 @@ export class AuthService {
 
   // 회원가입 api
   async signUp(createUserDto: CreateUserDto) {
-    return await this.userService.createUser(createUserDto);
+    return await this.userService.createUser({
+      ...createUserDto,
+      provider: ProviderEnum.LOCAL,
+    });
   }
 
   // 로그인 api

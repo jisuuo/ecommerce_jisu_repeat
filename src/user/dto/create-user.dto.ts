@@ -12,7 +12,7 @@ export class CreateUserDto {
   password?: string;
 
   @ApiProperty()
-  provider?: ProviderEnum;
+  provider?: ProviderEnum = ProviderEnum.LOCAL;
 
   @ApiProperty()
   profileImg?: string;
