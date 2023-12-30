@@ -15,6 +15,7 @@ import { RequestWithUserInterface } from '../interfaces/requestWithUser.interfac
 import { JwtUserGuard } from '../guards/jwt-user.guard';
 import { CheckEmailDto } from '../user/dto/check-email.dto';
 import { GoogleUserGuard } from '../guards/google-user.guard';
+import { NaverUserGuard } from '../guards/naver-user.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -74,5 +75,17 @@ export class AuthController {
       user,
       token,
     };
+  }
+
+  @Get('naver')
+  @UseGuards(NaverUserGuard)
+  async naverLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('naver/callback')
+  @UseGuards(NaverUserGuard)
+  async naverCallback(@Req() req: RequestWithUserInterface) {
+    return req.user;
   }
 }
