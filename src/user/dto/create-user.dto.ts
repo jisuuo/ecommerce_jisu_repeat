@@ -9,8 +9,11 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty()
-  password: string;
+  password?: string;
 
   @ApiProperty()
-  provider: ProviderEnum;
+  provider?: ProviderEnum;
+
+  @ApiProperty()
+  profileImg?: string;
 }
