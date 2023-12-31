@@ -16,6 +16,7 @@ import { JwtUserGuard } from '../guards/jwt-user.guard';
 import { CheckEmailDto } from '../user/dto/check-email.dto';
 import { GoogleUserGuard } from '../guards/google-user.guard';
 import { NaverUserGuard } from '../guards/naver-user.guard';
+import { ChangePasswordDto } from '../user/dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -87,5 +88,17 @@ export class AuthController {
   @UseGuards(NaverUserGuard)
   async naverCallback(@Req() req: RequestWithUserInterface) {
     return req.user;
+  }
+
+  // 본인확인 비밀번호 변경
+  @Post('changePassword')
+  @UseGuards(JwtUserGuard)
+  async ChangePassword(
+    @Req() req: RequestWithUserInterface,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    const user = req.user;
+    await this.authService.getCookieWithToken(user.id);
+    return await this.authService.updatePassword(req, changePasswordDto);
   }
 }

@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Req,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginUserDto } from '../user/dto/login-user.dto';
@@ -9,6 +15,8 @@ import { EmailService } from '../email/email.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ProviderEnum } from '../enum/provider.enum';
+import { RequestWithUserInterface } from '../interfaces/requestWithUser.interface';
+import { ChangePasswordDto } from '../user/dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,12 +37,14 @@ export class AuthService {
   }
 
   // 로그인 api
-  async login(loginUserDto: LoginUserDto) {
+  async loginUser(loginUserDto: LoginUserDto) {
+    // 이메일 유무 체크
     const user = await this.userService.getUserByEmail(loginUserDto.email);
-    // const isMatched = await bcrypt.compare(password, user.password);
-    const isMatched = user.checkPassword(loginUserDto.password);
+    // 패스워드 매칭
+    //const isMatched = await bcrypt.compare(loginUserDto.password, user.password);
+    const isMatched = await user.checkPassword(loginUserDto.password);
     if (!isMatched) {
-      throw new HttpException('Not Matched', HttpStatus.CONFLICT);
+      throw new HttpException('Password do not matched', HttpStatus.CONFLICT);
     }
     return user;
   }
@@ -66,6 +76,32 @@ export class AuthService {
     }
     await this.cacheManager.del(email);
     return 'Success Check';
+  }
+
+  async updatePassword(
+    @Req() req: RequestWithUserInterface,
+    changePasswordDto: ChangePasswordDto,
+  ) {
+    const { user } = req;
+    // 유저의 로컬 확인
+    if (user.provider !== ProviderEnum.LOCAL) {
+      throw new HttpException('Not Local Provider', HttpStatus.CONFLICT);
+    }
+    // 유저의 패스워드 확인
+    const isMatched = await user.checkPassword(changePasswordDto.password);
+    // 일치시 && 유저의 변경 패스워드 및 확인 패스워드 확인
+    if (!isMatched) {
+      throw new HttpException('Not Matched', HttpStatus.BAD_REQUEST);
+      // 비밀번호 업데이트
+    } else if (
+      changePasswordDto.changePassword === changePasswordDto.confirmPassword
+    ) {
+      const updateUser = await this.userService.updatePassword(
+        user.id,
+        changePasswordDto.confirmPassword,
+      );
+      return updateUser;
+    }
   }
 
   generateNumber() {
