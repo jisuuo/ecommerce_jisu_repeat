@@ -32,6 +32,13 @@ export class UserService {
     if (user) return user;
     throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
+
+  async getUserByUsername(username: string) {
+    const user = await this.userRepo.findOneBy({ username: username });
+    if (user) return user;
+    throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+  }
+
   async updatePassword(userId: string, confirmPassword: string) {
     const user = await this.userRepo.findOneBy({ id: userId });
     const saltValue = await bcrypt.genSalt(10);

@@ -1,5 +1,41 @@
 version: "3"
 services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./cert/cert.pem:/etc/nginx/cert/cert.pem
+      - ./cert/key.pem:/etc/nginx/cert/key.pem
+    networks:
+      - jisu-network
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - jisu_api
+
+  jisu_api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    command: npm run start:dev
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - jisu-network
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -7,11 +43,20 @@ services:
       - "5432:5432"
     env_file:
       - docker.env
+    networks:
+      - jisu-network
 
   redis:
     container_name: redis
     image: "redis:alpine"
-    ports:
-      - "6379:6379"
     env_file:
       - .env
+    ports:
+      - "6379:6379"
+    networks:
+      - jisu-network
+
+networks:
+  jisu-network:
+    driver: bridge
+

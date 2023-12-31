@@ -17,6 +17,7 @@ import { CheckEmailDto } from '../user/dto/check-email.dto';
 import { GoogleUserGuard } from '../guards/google-user.guard';
 import { NaverUserGuard } from '../guards/naver-user.guard';
 import { ChangePasswordDto } from '../user/dto/change-password.dto';
+import { KakaoUserGuard } from '../guards/kakao-user.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -87,6 +88,18 @@ export class AuthController {
   @Get('naver/callback')
   @UseGuards(NaverUserGuard)
   async naverCallback(@Req() req: RequestWithUserInterface) {
+    return req.user;
+  }
+
+  @Get('kakao')
+  @UseGuards(KakaoUserGuard)
+  async kakaoLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('kakao/callback')
+  @UseGuards(KakaoUserGuard)
+  async kakaoCallback(@Req() req: RequestWithUserInterface) {
     return req.user;
   }
 
