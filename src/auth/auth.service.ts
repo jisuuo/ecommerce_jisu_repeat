@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  NotFoundException,
   Req,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
@@ -75,13 +76,19 @@ export class AuthService {
       throw new HttpException('Not Matched', HttpStatus.CONFLICT);
     }
     await this.cacheManager.del(email);
-    return 'Success Check';
+    return true;
   }
 
-  async updatePassword(
+  async changePassword(
     @Req() req: RequestWithUserInterface,
     changePasswordDto: ChangePasswordDto,
   ) {
+    /**
+     * 로그인 시 로그인 한 이메일의 토큰으로 인증이 우선
+     * 1.유저의 provider 로컬 확인
+     * 2.일치 시 유저의 변경 패스워드 및 확인 패스워드 입력 일치 확인
+     * 3.비밀번호 업데이트
+     **/
     const { user } = req;
     // 유저의 로컬 확인
     if (user.provider !== ProviderEnum.LOCAL) {
@@ -89,19 +96,39 @@ export class AuthService {
     }
     // 유저의 패스워드 확인
     const isMatched = await user.checkPassword(changePasswordDto.password);
-    // 일치시 && 유저의 변경 패스워드 및 확인 패스워드 확인
+    // 기존 비밀번호 일치 확인
     if (!isMatched) {
       throw new HttpException('Not Matched', HttpStatus.BAD_REQUEST);
-      // 비밀번호 업데이트
+      // 일치시 && 유저의 변경 패스워드 및 확인 패스워드 확인
     } else if (
       changePasswordDto.changePassword === changePasswordDto.confirmPassword
     ) {
+      // 비밀번호 업데이트
       const updateUser = await this.userService.updatePassword(
         user.id,
         changePasswordDto.confirmPassword,
       );
       return updateUser;
     }
+  }
+
+  async ChangeNewPassword(email: string, changePasswordDto: ChangePasswordDto) {
+    /**
+     * 본인인증했을 시 기존 패스워드는 없애고 새로운 비밀번호로 업데이트
+     * 1.이메일 인증
+     * 2.본인인증 한 이메일로 아이디를 확인
+     * 3.유저 있을시 유저의 비밀번호를 새로운 비밀번호 입력값으로 업데이트
+     *
+     **/
+    const existingUser = await this.userService.getUserByEmail(email);
+    if (!existingUser) {
+      throw new NotFoundException('등록된 유저가 아닙니다');
+    }
+    const user = await this.userService.updatePassword(
+      existingUser.id,
+      changePasswordDto.confirmPassword,
+    );
+    return user;
   }
 
   generateNumber() {
