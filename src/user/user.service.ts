@@ -33,11 +33,11 @@ export class UserService {
     throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
   }
 
-  async getAllUsers(userId: string) {
-    const user = await this.getUserById(userId);
-    if (!user.role.includes(RoleEnum.ADMIN)) {
-      throw new HttpException('Not Admin', HttpStatus.BAD_REQUEST);
-    }
+  async getAllUsers() {
+    // const user = await this.getUserById(userId);
+    // if (!user.role.includes(RoleEnum.ADMIN)) {
+    //   throw new HttpException('Not Admin', HttpStatus.BAD_REQUEST);
+    // }
     return await this.userRepo.find();
   }
 
