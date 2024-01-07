@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
+import { AddressEntity } from '../entities/address.entity';
 
 export class UpdateProfileDto {
   // 닉네임
@@ -17,15 +18,19 @@ export class UpdateProfileDto {
   profileImg?: string;
 
   //address 테이블
-  @ApiProperty()
-  @IsOptional() // 선택값
-  street?: string;
+  // @ApiProperty()
+  // @IsOptional() // 선택값
+  // street: string;
+  //
+  // @ApiProperty()
+  // @IsOptional() // 선택값
+  // city: string;
+  //
+  // @ApiProperty()
+  // @IsOptional() // 선택값
+  // country: string;
 
   @ApiProperty()
-  @IsOptional() // 선택값
-  city?: string;
-
-  @ApiProperty()
-  @IsOptional() // 선택값
-  country?: string;
+  @IsOptional()
+  address: AddressEntity;
 }

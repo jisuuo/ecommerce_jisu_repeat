@@ -7,7 +7,6 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { AddressEntity } from '../entities/address.entity';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -35,7 +34,4 @@ export class CreateUserDto {
 
   @ApiProperty()
   profileImg?: string;
-
-  @ApiProperty()
-  address?: AddressEntity;
 }

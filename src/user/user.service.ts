@@ -53,25 +53,29 @@ export class UserService {
       throw new NotFoundException('등록된 유저가 아닙니다.');
     }
 
+    console.log(updateProfileDto);
+
     if (updateProfileDto.nickname) {
       user.nickname = updateProfileDto.nickname;
+      console.log(user.nickname);
     }
 
     if (updateProfileDto.profileImg) {
       user.profileImg = updateProfileDto.profileImg;
     }
 
-    if (updateProfileDto.country) {
-      user.address.country = updateProfileDto.country;
+    if (updateProfileDto.address) {
+      user.address = updateProfileDto.address;
     }
 
-    if (updateProfileDto.city) {
-      user.address.city = updateProfileDto.city;
-    }
-
-    if (updateProfileDto.street) {
-      user.address.street = updateProfileDto.street;
-    }
+    // if (updateProfileDto.city) {
+    //   user.address.city = updateProfileDto.city;
+    // }
+    //
+    // if (updateProfileDto.street) {
+    //   user.address.street = updateProfileDto.street;
+    //   console.log(user.address.street);
+    // }
 
     const updateUser = await this.userRepo.save(user);
     return updateUser;

@@ -5,17 +5,17 @@ import { User } from './user.entity';
 @Entity()
 export class AddressEntity extends BaseEntity {
   @Column({
-    default: '',
+    nullable: true,
   })
   public street: string;
 
   @Column({
-    default: '',
+    nullable: true,
   })
   public city: string;
 
   @Column({
-    default: '',
+    nullable: true,
   })
   public country: string;
 
