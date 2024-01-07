@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+import { RoleEnum } from '../enum/role.enum';
 
 @Injectable()
 export class UserService {
@@ -30,6 +31,14 @@ export class UserService {
     const user = await this.userRepo.findOneBy({ id: userId });
     if (user) return user;
     throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
+  }
+
+  async getAllUsers(userId: string) {
+    const user = await this.getUserById(userId);
+    if (!user.role.includes(RoleEnum.ADMIN)) {
+      throw new HttpException('Not Admin', HttpStatus.BAD_REQUEST);
+    }
+    return await this.userRepo.find();
   }
 
   async updatePassword(userId: string, confirmPassword: string) {
