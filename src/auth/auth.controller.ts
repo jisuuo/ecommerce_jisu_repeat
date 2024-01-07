@@ -18,8 +18,6 @@ import { GoogleUserGuard } from '../guards/google-user.guard';
 import { NaverUserGuard } from '../guards/naver-user.guard';
 import { ChangePasswordDto } from '../user/dto/change-password.dto';
 import { KakaoUserGuard } from '../guards/kakao-user.guard';
-import { AuthenticatePasswordDto } from '../user/dto/authenticate-password.dto';
-import { User } from '../user/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {

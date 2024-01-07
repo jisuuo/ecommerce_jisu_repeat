@@ -5,6 +5,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { RoleEnum } from '../../enum/role.enum';
 import { ProviderEnum } from '../../enum/provider.enum';
 import * as gravatar from 'gravatar';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends BaseEntity {
@@ -17,6 +18,7 @@ export class User extends BaseEntity {
   @Column({
     nullable: true,
   })
+  @Exclude()
   password?: string;
 
   @Column({
