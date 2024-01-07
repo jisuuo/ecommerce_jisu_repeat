@@ -18,6 +18,7 @@ import { Cache } from 'cache-manager';
 import { ProviderEnum } from '../enum/provider.enum';
 import { RequestWithUserInterface } from '../interfaces/requestWithUser.interface';
 import { ChangePasswordDto } from '../user/dto/change-password.dto';
+import { UpdateProfileDto } from '../user/dto/update-profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -131,6 +132,11 @@ export class AuthService {
     return user;
   }
 
+  // 프로필 수정
+  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto) {
+    return await this.userService.updateProfile(userId, updateProfileDto);
+  }
+  x;
   generateNumber() {
     let OTP = '';
     for (let i = 0; i <= 6; i++) {

@@ -56,12 +56,12 @@ export class MovieService {
     return movies;
   }
 
-  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // [@Cron(CronExpression.EVERY_10_SECONDS)
   // async handleCron() {
   //   await this.emailService.sendMail({
   //     to: 'wltn203@naver.com',
   //     subject: '스케줄링 인증',
   //     text: '스케줄링 인증',
   //   });
-  // }
+  // }]
 }

@@ -6,6 +6,8 @@ import {
   Req,
   Get,
   HttpStatus,
+  Patch,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -18,6 +20,7 @@ import { GoogleUserGuard } from '../guards/google-user.guard';
 import { NaverUserGuard } from '../guards/naver-user.guard';
 import { ChangePasswordDto } from '../user/dto/change-password.dto';
 import { KakaoUserGuard } from '../guards/kakao-user.guard';
+import { UpdateProfileDto } from '../user/dto/update-profile.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -46,6 +49,16 @@ export class AuthController {
   @UseGuards(JwtUserGuard)
   async getUserInfoById(@Req() req: RequestWithUserInterface) {
     return req.user;
+  }
+  // 프로필 수정
+  @Put('update/profile')
+  @UseGuards(JwtUserGuard)
+  async updateUserInfo(
+    @Req() req: RequestWithUserInterface,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    const { user } = req;
+    return await this.authService.updateProfile(user.id, updateProfileDto);
   }
 
   @Post('email/send')
@@ -88,7 +101,12 @@ export class AuthController {
   @Get('naver/callback')
   @UseGuards(NaverUserGuard)
   async naverCallback(@Req() req: RequestWithUserInterface) {
-    return req.user;
+    const { user } = req;
+    const token = await this.authService.getCookieWithToken(user.id);
+    return {
+      user,
+      token,
+    };
   }
 
   @Get('kakao')

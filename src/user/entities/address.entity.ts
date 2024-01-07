@@ -4,13 +4,19 @@ import { User } from './user.entity';
 
 @Entity()
 export class AddressEntity extends BaseEntity {
-  @Column()
+  @Column({
+    default: '',
+  })
   public street: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   public city: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   public country: string;
 
   @OneToOne(() => User, (user: User) => user.address)

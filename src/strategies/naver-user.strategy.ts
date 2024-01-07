@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-naver';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
+import { AddressEntity } from '../user/entities/address.entity';
 
 @Injectable()
 export class NaverUserStrategy extends PassportStrategy(Strategy) {
