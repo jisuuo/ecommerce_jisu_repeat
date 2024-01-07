@@ -10,7 +10,9 @@ import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { RedisModule } from './redis/redis.module';
 import { ReviewModule } from './review/review.module';
+import { MovieModule } from './movie/movie.module';
 import * as Joi from '@hapi/joi';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -51,6 +53,9 @@ import * as Joi from '@hapi/joi';
         KAKAO_AUTH_CLIENT_ID: Joi.string().required(),
         KAKAO_AUTH_CLIENT_SECRET: Joi.string().required(),
         KAKAO_AUTH_CALLBACK_URL: Joi.string(),
+
+        TMDB_URL: Joi.string().required(),
+        TMDB_KEY: Joi.string().required(),
       }),
     }),
     DatabaseModule,
@@ -60,6 +65,8 @@ import * as Joi from '@hapi/joi';
     EmailModule,
     RedisModule,
     ReviewModule,
+    MovieModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, EmailService],
